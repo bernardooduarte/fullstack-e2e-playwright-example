@@ -18,20 +18,28 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20
-        cache: 'npm'
-
-    - name: Install root dependencies
-      run: npm install
 
     - name: Install E2E dependencies
-      run: cd e2e && npm install
+      run: |
+        cd e2e
+        npm install
 
     - name: Start Services (Docker Compose)
       run: docker compose -f docker-compose.e2e.yml up --build -d
 
     - name: Wait for Backend
       run: |
-        npx wait-on http://127.0.0.1:3001/api/users --timeout 60000
+        attempt_counter=0
+        max_attempts=15
+        until $(curl --output /dev/null --silent --head --fail http://127.0.0.1:3001/api/users); do
+            if [ ${attempt_counter} -eq ${max_attempts} ];then
+              echo "Max attempts reached"
+              exit 1
+            fi
+            printf '.'
+            attempt_counter=$(($attempt_counter+1))
+            sleep 5
+        done
 
     - name: Install Playwright Browsers
       run: cd e2e && npx playwright install --with-deps chromium
