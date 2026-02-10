@@ -9,7 +9,7 @@ jobs:
   test:
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -20,32 +20,41 @@ jobs:
         node-version: 20
 
     - name: Install E2E dependencies
-      run: |
-        cd e2e
-        npm install
+      working-directory: ./e2e
+      run: npm install
 
     - name: Start Services (Docker Compose)
       run: docker compose -f docker-compose.e2e.yml up --build -d
+
+    - name: Show docker ps
+      run: docker ps
+
+    - name: Show backend logs if failing
+      if: failure()
+      run: docker logs backend-e2e || true
 
     - name: Wait for Backend
       run: |
         attempt_counter=0
         max_attempts=15
-        until $(curl --output /dev/null --silent --head --fail http://127.0.0.1:3001/api/users); do
+        until curl --output /dev/null --silent --head --fail http://127.0.0.1:3001/api/users; do
             if [ ${attempt_counter} -eq ${max_attempts} ];then
               echo "Max attempts reached"
+              docker logs backend-e2e || true
               exit 1
             fi
-            printf '.'
+            echo "Waiting for backend..."
             attempt_counter=$(($attempt_counter+1))
             sleep 5
         done
 
     - name: Install Playwright Browsers
-      run: cd e2e && npx playwright install --with-deps chromium
+      working-directory: ./e2e
+      run: npx playwright install --with-deps chromium
 
     - name: Run Playwright tests
-      run: cd e2e && npx playwright test
+      working-directory: ./e2e
+      run: npx playwright test
 
     - uses: actions/upload-artifact@v4
       if: always()
