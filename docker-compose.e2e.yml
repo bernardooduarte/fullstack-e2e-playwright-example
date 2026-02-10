@@ -35,8 +35,8 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: ./frontend         
+      dockerfile: Dockerfile       
     container_name: frontend-e2e
     ports:
       - "3000:3000"
