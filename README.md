@@ -91,6 +91,4 @@ npx playwright test --ui
 
 Desenvolvido com foco em Qualidade de Software e Engenharia Full Stack.
 
-```
-
 ---
