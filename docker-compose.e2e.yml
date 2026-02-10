@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: password_test
       POSTGRES_DB: fullstack_db
     ports:
-      - "5433:5432" 
+      - "5433:5432"
     volumes:
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
@@ -18,22 +18,25 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: ./backend/Dockerfile.e2e
+      context: ./backend
+      dockerfile: Dockerfile.e2e
     container_name: backend-e2e
-    ports:
-      - "3001:3001"
-    environment:
-      DATABASE_URL: postgres://user_test:password_test@db-e2e:5432/fullstack_db
-      NODE_ENV: test
     depends_on:
       db-e2e:
         condition: service_healthy
+        required: true
+    environment:
+      DATABASE_URL: postgres://user_test:password_test@db-e2e:5432/fullstack_db
+      NODE_ENV: test
+    ports:
+      - "3001:3001"
+    networks:
+      - default
 
   frontend:
     build:
-      context: .
-      dockerfile: ./frontend/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: frontend-e2e
     ports:
       - "3000:3000"
@@ -41,6 +44,8 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:3001
     depends_on:
       - backend
+    networks:
+      - default
 
 networks:
   default:
