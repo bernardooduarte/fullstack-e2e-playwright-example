@@ -18,8 +18,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile.e2e
+      context: .
+      dockerfile: ./backend/Dockerfile.e2e
     container_name: backend-e2e
     ports:
       - "3001:3001"
@@ -32,8 +32,8 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./frontend/Dockerfile
     container_name: frontend-e2e
     ports:
       - "3000:3000"
