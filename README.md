@@ -64,23 +64,6 @@ Utilizamos o `tsx` no ambiente de containers para permitir a execução direta d
    npm install
    npx playwright test --ui
    ```
-```bash
-docker compose -f docker-compose.e2e.yml up --build
-
-```
-
-
-*Aguarde a mensagem: `Backend rodando na porta 3001`.*
-2. **Rodar os Testes:**
-Em um novo terminal, entre na pasta de testes e execute o Playwright:
-```bash
-cd e2e
-npm install
-npx playwright test --ui
-
-```
-
-
 
 ## 🧪 Fluxos Testados
 
