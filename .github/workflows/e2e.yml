@@ -15,16 +15,16 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Start containers
-      run: docker compose -f docker-compose.e2e.yml up -d
+      run: docker compose -f docker-compose.e2e.yml up -d --build
 
     - name: Wait for services
       run: |
         echo "Aguardando backend..."
-        timeout 60s bash -c 'until curl -s http://localhost:3001/health; do sleep 2; done'
+        timeout 60s bash -c 'until curl -s http://127.0.0.1:3001; do sleep 2; done'
         echo "Backend pronto!"
         
         echo "Aguardando frontend..."
-        timeout 60s bash -c 'until curl -s http://localhost:3000; do sleep 2; done'
+        timeout 60s bash -c 'until curl -s http://127.0.0.1:3000; do sleep 2; done'
         echo "Frontend pronto!"
 
     - uses: actions/setup-node@v4
@@ -44,7 +44,8 @@ jobs:
     - name: Run Playwright tests
       working-directory: ./e2e
       env:
-        API_URL: http://localhost:3001
+        BASE_URL: http://127.0.0.1:3000
+        API_URL: http://127.0.0.1:3001 
       run: npx playwright test
 
     - uses: actions/upload-artifact@v4

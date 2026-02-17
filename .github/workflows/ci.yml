@@ -1,11 +1,14 @@
-name: CI
+name: CI Checks
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  build-test:
+  code-quality-and-unit-tests:
+    name: Code Quality & Unit Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -17,18 +20,43 @@ jobs:
           cache: 'npm'
           cache-dependency-path: e2e/package-lock.json
 
-      - name: Install dependencies
+      # ---------------------------------------------------
+      # 1. CHECAGENS DA PASTA E2E (Apenas Lint)
+      # ---------------------------------------------------
+      - name: Install E2E dependencies
         working-directory: e2e
         run: npm ci
 
-      - name: Lint
+      - name: Lint E2E Code
         working-directory: e2e
         run: npm run lint --if-present
 
-      - name: Unit tests
-        working-directory: e2e
-        run: npm test --if-present
+      # NOTA: O 'npm test' foi removido daqui propositalmente! 
+      # O Playwright agora é responsabilidade exclusiva do workflow e2e.yml.
 
-      - name: Build
-        working-directory: e2e
-        run: npm run build --if-present
+      # ---------------------------------------------------
+      # 2. SUGESTÃO: CHECAGENS DO FRONTEND
+      # Descomente abaixo para testar o código do frontend
+      # ---------------------------------------------------
+      # - name: Install Frontend Dependencies
+      #   working-directory: frontend
+      #   run: npm ci
+      
+      # - name: Frontend Lint & Unit Tests
+      #   working-directory: frontend
+      #   run: |
+      #     npm run lint --if-present
+      #     npm test --if-present    # <- Aqui rodam testes unitários (Jest/Vitest), não o Playwright
+      #     npm run build --if-present
+
+      # ---------------------------------------------------
+      # 3. SUGESTÃO: CHECAGENS DO BACKEND
+      # Descomente abaixo para testar o código do backend
+      # ---------------------------------------------------
+      # - name: Install Backend Dependencies
+      #   working-directory: backend
+      #   run: npm ci
+      
+      # - name: Backend Lint & Unit Tests
+      #   working-directory: backend
+      #
