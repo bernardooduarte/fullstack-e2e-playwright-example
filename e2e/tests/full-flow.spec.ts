@@ -5,8 +5,13 @@ const API_URL = process.env.API_URL || 'http://localhost:3001';
 test.beforeEach(async ({ request }) => {
     expect(API_URL).toBeDefined();
     console.log('Usando API_URL:', API_URL);
-
     const response = await request.post(`${API_URL}/api/testing/reset`);
+
+    if (!response.ok()) {
+        console.error('Status do erro:', response.status());
+        console.error('Corpo da resposta:', await response.text());
+    }
+
     expect(response.ok()).toBeTruthy();
 });
 
