@@ -11,19 +11,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+          cache-dependency-path: e2e/package-lock.json
 
       - name: Install dependencies
+        working-directory: e2e
         run: npm ci
 
-      - name: Lint (optional)
+      - name: Lint
+        working-directory: e2e
         run: npm run lint --if-present
 
       - name: Unit tests
+        working-directory: e2e
         run: npm test --if-present
 
       - name: Build
+        working-directory: e2e
         run: npm run build --if-present

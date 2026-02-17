@@ -1,5 +1,6 @@
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS items (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(100),
-  email VARCHAR(100) UNIQUE NOT NULL
+  name TEXT
 );
+
+INSERT INTO items (name) VALUES ('Item 1'), ('Item 2');
