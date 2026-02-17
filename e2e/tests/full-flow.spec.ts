@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const API_URL = process.env.API_URL || 'http://localhost:3001g';
+const API_URL = process.env.API_URL || 'http://localhost:3001';
 
 test.beforeEach(async ({ request }) => {
     expect(API_URL).toBeDefined();
