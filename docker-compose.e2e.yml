@@ -23,6 +23,7 @@ services:
       - "127.0.0.1:3001:3001"
     environment:
       DATABASE_URL: postgresql://testuser:testpass@postgres:5432/testdb
+      NODE_ENV: test
     depends_on:
       postgres:
         condition: service_healthy
