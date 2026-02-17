@@ -1,52 +1,16 @@
-services:
-  db-e2e:
-    image: postgres:16
-    container_name: db-e2e
-    environment:
-      POSTGRES_USER: user_test
-      POSTGRES_PASSWORD: password_test
-      POSTGRES_DB: fullstack_db
-    ports:
-      - "5433:5432"
-    volumes:
-      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user_test -d fullstack_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+version: "3.9"
 
+services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.e2e
+    build: ./backend
     container_name: backend-e2e
-    depends_on:
-      db-e2e:
-        condition: service_healthy
-        required: true
-    environment:
-      DATABASE_URL: postgres://user_test:password_test@db-e2e:5432/fullstack_db
-      NODE_ENV: test
     ports:
       - "3001:3001"
-    networks:
-      - default
 
   frontend:
-    build:
-      context: ./frontend         
-      dockerfile: Dockerfile       
+    build: ./frontend
     container_name: frontend-e2e
     ports:
       - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3001
     depends_on:
       - backend
-    networks:
-      - default
-
-networks:
-  default:
-    name: e2e-network
