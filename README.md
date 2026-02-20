@@ -4,10 +4,10 @@ Este repositório demonstra uma abordagem **profissional e determinística** par
 
 O projeto mostra como garantir:
 
-✅ isolamento entre testes
-✅ previsibilidade do banco de dados
-✅ paridade entre ambiente local e CI
-✅ confiabilidade em pipelines automatizados
+- ✅ isolamento entre testes
+- ✅ previsibilidade do banco de dados
+- ✅ paridade entre ambiente local e CI
+- ✅ confiabilidade em pipelines automatizados
 
 ---
 
@@ -46,9 +46,9 @@ Para evitar interferência entre testes:
 
 - Cada teste começa com um estado previsível.
 
-✅ elimina dependência entre testes
-✅ garante determinismo
-✅ evita falsos positivos/negativos
+- ✅ elimina dependência entre testes
+- ✅ garante determinismo
+- ✅ evita falsos positivos/negativos
 
 ---
 
@@ -62,9 +62,9 @@ Toda a infraestrutura roda via Docker:
 
 Isso garante:
 
-✅ ambiente idêntico ao CI
-✅ zero configuração manual
-✅ onboarding rápido
+- ✅ ambiente idêntico ao CI
+- ✅ zero configuração manual
+- ✅ onboarding rápido
 
 ---
 
