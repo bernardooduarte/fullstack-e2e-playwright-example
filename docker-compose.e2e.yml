@@ -25,6 +25,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:3001/api/users" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   frontend:
     build: ./frontend
