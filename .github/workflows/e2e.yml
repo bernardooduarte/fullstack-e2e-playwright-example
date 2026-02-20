@@ -2,9 +2,9 @@ name: E2E Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -12,49 +12,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Start containers
-      run: docker compose -f docker-compose.e2e.yml up -d --build
+      - name: Start containers
+        run: docker compose -f docker-compose.e2e.yml up -d --build
 
-    - name: Wait for services
-      run: |
-        echo "Aguardando backend..."
-        timeout 60s bash -c 'until curl -s http://127.0.0.1:3001; do sleep 2; done'
-        echo "Backend pronto!"
-        
-        echo "Aguardando frontend..."
-        timeout 60s bash -c 'until curl -s http://127.0.0.1:3000; do sleep 2; done'
-        echo "Frontend pronto!"
+      - name: Wait for services
+        run: |
+          echo "Aguardando backend..."
+          timeout 90s bash -c 'until curl -s http://127.0.0.1:3001/api/users; do sleep 2; done'
+          echo "Backend pronto!"
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'npm'
-        cache-dependency-path: e2e/package-lock.json
+          echo "Aguardando frontend..."
+          timeout 90s bash -c 'until curl -s http://127.0.0.1:3000; do sleep 2; done'
+          echo "Frontend pronto!"
 
-    - name: Install dependencies
-      working-directory: ./e2e
-      run: npm ci
+      - name: Reset database (SEED)
+        run: curl -X POST http://127.0.0.1:3001/api/testing/reset
 
-    - name: Install Playwright browsers
-      working-directory: ./e2e
-      run: npx playwright install chromium --with-deps
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: e2e/package-lock.json
 
-    - name: Run Playwright tests
-      working-directory: ./e2e
-      env:
-        BASE_URL: http://127.0.0.1:3000
-        API_URL: http://127.0.0.1:3001 
-      run: npx playwright test
+      - name: Install dependencies
+        working-directory: ./e2e
+        run: npm ci
 
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: e2e/playwright-report/
-        retention-days: 30
+      - name: Install Playwright browsers
+        working-directory: ./e2e
+        run: npx playwright install chromium --with-deps
 
-    - name: Stop containers
-      if: always()
-      run: docker compose -f docker-compose.e2e.yml down
+      - name: Run Playwright tests
+        working-directory: ./e2e
+        env:
+          BASE_URL: http://127.0.0.1:3000
+          API_URL: http://127.0.0.1:3001
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 30
+
+      - name: Stop containers
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down

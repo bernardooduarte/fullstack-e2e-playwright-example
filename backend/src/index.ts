@@ -57,6 +57,30 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
+app.post('/reset', async (req, res) => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE
+      );
+    `);
+
+    await pool.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE');
+
+    await pool.query(`
+      INSERT INTO users (name, email)
+      VALUES ('Tester', 'tester@email.com')
+    `);
+
+    res.status(204).end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to reset database' });
+  }
+});
+
 app.post('/api/users', async (req, res) => {
     const { name, email } = req.body;
 
